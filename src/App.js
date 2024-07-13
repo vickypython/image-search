@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 const API_URL = "https://api.unsplash.com/search/photos";
-const IMAGES_PER_PAGE = 2;
+const IMAGES_PER_PAGE = 12;
 
 const App = () => {
   const searchInput = useRef(null);
