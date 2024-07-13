@@ -4,32 +4,37 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 const API_URL = "https://api.unsplash.com/search/photos";
-const IMAGES_PER_PAGE = 22;
+const IMAGES_PER_PAGE = 2;
 
 const App = () => {
   const searchInput = useRef(null);
   const [images, setImages] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
-
+ 
   const fetchImages = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `${API_URL}?query=${searchInput.current.value}&page=1&per_page=${IMAGES_PER_PAGE}&client_id=${process.env.REACT_APP_API_KEY}`
+        `${API_URL}?query=${searchInput.current.value}&page=${page}&per_page=${IMAGES_PER_PAGE}&client_id=${process.env.REACT_APP_API_KEY}`
       );
+
       console.log("data", data);
       setImages(data.results);
+
       setTotalPages(data.total_pages);
     } catch (error) {
       console.log(error);
     }
   }, [page]);
   useEffect(() => {
+   
     fetchImages();
+    
   }, [fetchImages, page]);
   const resetSearch = () => {
     setPage(1);
     fetchImages();
+    
   };
   const handleSearch = (e) => {
     e.preventDefault();
@@ -41,6 +46,7 @@ const App = () => {
     resetSearch();
   };
   console.log("pages", page);
+ 
 
   return (
     <>
