@@ -11,11 +11,12 @@ const App = () => {
   const [images, setImages] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
- const [loading,setLoading]=useState(false)
- const [searchTerm,setSearchTerm]=useState('')
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const fetchImages = useCallback(async () => {
-    if(!searchTerm) return
-    setLoading(true)
+    if (!searchTerm) return;
+
+    setLoading(true);
     try {
       const { data } = await axios.get(
         `${API_URL}?query=${searchInput.current.value}&page=${page}&per_page=${IMAGES_PER_PAGE}&client_id=${process.env.REACT_APP_API_KEY}`
@@ -27,21 +28,18 @@ const App = () => {
       setTotalPages(data.total_pages);
     } catch (error) {
       console.log(error);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   }, [page, searchTerm]);
   useEffect(() => {
-   if(searchTerm){
-    fetchImages();
-   }
-   
-    
-  }, [fetchImages, page, searchTerm]);
+    if (searchTerm) {
+      fetchImages();
+    }
+  }, [fetchImages, searchTerm]); //changed the dependeny array page because we already passed it to callback hook
   const resetSearch = () => {
     setPage(1);
     fetchImages();
-    
   };
   const handleSearch = (e) => {
     e.preventDefault();
@@ -49,11 +47,10 @@ const App = () => {
     resetSearch();
   };
   const handleSelection = (selection) => {
-  setSearchTerm(  searchInput.current.value = selection)
+    setSearchTerm((searchInput.current.value = selection));
     resetSearch();
   };
   console.log("pages", page);
- 
 
   return (
     <>
@@ -75,25 +72,30 @@ const App = () => {
           <div onClick={() => handleSelection("cats")}>Cats</div>
           <div onClick={() => handleSelection("shoes")}>Shoes</div>
         </div>
-        {loading &&<p className="title">loading....</p>}
-        <div className="images">
-          {images.map((image) => (
-            <img
-              key={image.id}
-              src={image.urls.small}
-              alt={image.alt_description}
-              className="image"
-            />
-          ))}
-        </div>
-        <div className="buttons">
-          {page > 1 && (
-            <Button onClick={() => setPage(page - 1)}>Previous</Button>
-          )}
-          {page < totalPages && (
-            <Button onClick={() => setPage(page + 1)}>Next</Button>
-          )}
-        </div>
+        {loading ? (
+          <p className="loading">loading....</p>
+        ) : (
+          <>
+            <div className="images">
+              {images.map((image) => (
+                <img
+                  key={image.id}
+                  src={image.urls.small}
+                  alt={image.alt_description}
+                  className="image"
+                />
+              ))}
+            </div>
+            <div className="buttons">
+              {page > 1 && (
+                <Button onClick={() => setPage(page - 1)}>Previous</Button>
+              )}
+              {page < totalPages && (
+                <Button onClick={() => setPage(page + 1)}>Next</Button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </>
   );
